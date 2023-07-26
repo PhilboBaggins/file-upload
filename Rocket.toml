@@ -1,0 +1,59 @@
+[default]
+limits.file = "10MiB"
+app_upload_dir = "UPLOADS"
+app_allowed_extensions = [
+    "7zip",
+    "avi",
+    #"bin",
+    "bmp",
+    "bmp",
+    "csv",
+    "doc",  # Microsoft Word document before Word 2007
+    "docx",
+    "dxf"
+    "eps",
+    #"exe",
+    "gif",
+    "gif",
+    "iso",
+    "jpeg",
+    "jpeg",
+    "jpg",
+    "jpg",
+    "m4a",
+    "md",
+    "mid",
+    "midi",
+    "mov",
+    "mp3",
+    "mp4",
+    "mpeg",
+    "mpg",
+    "pdf",
+    "pdf",
+    "png",
+    "png",
+    "ppt",  # Microsoft PowerPoint format before PowerPoint 2007
+    "pptx", # Microsoft PowerPoint presentation
+    "psd",  # Adobe Photoshop file
+    "rar",
+    "rar",
+    "rtf",
+    "svg",
+    "tar.gz",
+    "tar",
+    "tgz",
+    "tif",
+    "tiff",
+    "txt",
+    "txt",
+    "wav",
+    "wma",  # Windows Media Audio file
+    "wmv",  # Windows Media Video file
+    "xls",  # Microsoft Excel workbook before Excel 2007
+    "xlsx", # Microsoft Excel workbook after Excel 2007
+    "xlt",  # Microsoft Excel template before Excel 2007
+    "xltx", # Microsoft Excel template after Excel 2007
+    "zip",
+    "zip",
+]
