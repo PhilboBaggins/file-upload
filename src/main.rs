@@ -17,7 +17,6 @@ use time::OffsetDateTime;
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
-#[allow(dead_code)]
 struct AppConfig {
     app_upload_dir: String,
     app_allowed_extensions: Vec<String>,
@@ -48,7 +47,6 @@ async fn upload(
     mut file: Form<TempFile<'_>>,
     app_config: &State<AppConfig>,
 ) -> std::io::Result<String> {
-    // Get the file extension
     if let Some(ext) = get_file_extension(file.raw_name(), &app_config.app_allowed_extensions) {
         // Create directory
         let timestamp_format =
@@ -94,11 +92,6 @@ async fn upload(
     }
 }
 
-#[get("/hello")]
-fn hello() -> &'static str {
-    "Hello world"
-}
-
 #[get("/")]
 fn index() -> RawHtml<&'static str> {
     RawHtml(include_str!("index.html"))
@@ -107,6 +100,6 @@ fn index() -> RawHtml<&'static str> {
 #[launch]
 fn rocket() -> _ {
     rocket::build()
-        .mount("/", routes![index, hello, upload])
+        .mount("/", routes![index, upload])
         .attach(AdHoc::config::<AppConfig>())
 }
