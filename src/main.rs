@@ -42,6 +42,18 @@ fn get_file_extension<'a>(
     None
 }
 
+fn get_current_timestamp() -> String {
+    let timestamp_format =
+        format_description::parse("[year]-[month]-[day]_[hour]-[minute]-[second]").unwrap();
+
+    // Try to get timstamp in local timezone but if that doesn't work, fall back to UTC
+    if let Ok(timestamp) = OffsetDateTime::now_local() {
+        timestamp.format(&timestamp_format).unwrap()
+    } else {
+        OffsetDateTime::now_utc().format(&timestamp_format).unwrap()
+    }
+}
+
 #[post("/upload", format = "multipart/form-data", data = "<file>")]
 async fn upload(
     mut file: Form<TempFile<'_>>,
@@ -49,12 +61,7 @@ async fn upload(
 ) -> std::io::Result<String> {
     if let Some(ext) = get_file_extension(file.raw_name(), &app_config.app_allowed_extensions) {
         // Create directory
-        let timestamp_format =
-            format_description::parse("[year]-[month]-[day]_[hour]-[minute]-[second]").unwrap();
-        let timestamp = OffsetDateTime::now_local()
-            .unwrap()
-            .format(&timestamp_format)
-            .unwrap();
+        let timestamp = get_current_timestamp();
         let rand_string: String = rand::thread_rng()
             .sample_iter(&Alphanumeric)
             .take(8)
