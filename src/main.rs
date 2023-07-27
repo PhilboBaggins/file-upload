@@ -1,7 +1,6 @@
 #[macro_use]
 extern crate rocket;
 
-use rand::{distributions::Alphanumeric, Rng};
 use rocket::fairing::AdHoc;
 use rocket::form::Form;
 use rocket::fs::FileName;
@@ -43,8 +42,10 @@ fn get_file_extension<'a>(
 }
 
 fn get_current_timestamp() -> String {
+    // TODO: Move this somewhere else so we don't have to parse the format string every time we generate a timestamp
     let timestamp_format =
-        format_description::parse("[year]-[month]-[day]_[hour]-[minute]-[second]").unwrap();
+        format_description::parse("[year]-[month]-[day]_[hour]-[minute]-[second]-[Subsecond]")
+            .unwrap();
 
     // Try to get timstamp in local timezone but if that doesn't work, fall back to UTC
     if let Ok(timestamp) = OffsetDateTime::now_local() {
@@ -62,13 +63,7 @@ async fn upload(
     if let Some(ext) = get_file_extension(file.raw_name(), &app_config.app_allowed_extensions) {
         // Create directory
         let timestamp = get_current_timestamp();
-        let rand_string: String = rand::thread_rng()
-            .sample_iter(&Alphanumeric)
-            .take(8)
-            .map(char::from)
-            .collect();
-        let dest_dir = PathBuf::from(&app_config.app_upload_dir)
-            .join(format!("{} {}", timestamp, rand_string));
+        let dest_dir = PathBuf::from(&app_config.app_upload_dir).join(timestamp);
         std::fs::create_dir_all(&dest_dir)?;
 
         // Persist file
