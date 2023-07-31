@@ -8,6 +8,7 @@ use rocket::fs::TempFile;
 use rocket::response::content::RawHtml;
 use rocket::serde::Deserialize;
 use rocket::State;
+use rocket::tokio;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
@@ -64,7 +65,7 @@ async fn upload(
         // Create directory
         let timestamp = get_current_timestamp();
         let dest_dir = PathBuf::from(&app_config.app_upload_dir).join(timestamp);
-        std::fs::create_dir_all(&dest_dir)?;
+        tokio::fs::create_dir_all(&dest_dir).await?;
 
         // Persist file
         let filename = file.name().unwrap_or("FILENAME_UNKNOWN");
