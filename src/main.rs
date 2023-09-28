@@ -9,7 +9,7 @@ use rocket::response::content::RawHtml;
 use rocket::serde::Deserialize;
 use rocket::State;
 use rocket::tokio;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
 
@@ -54,6 +54,23 @@ fn get_current_timestamp() -> String {
     }
 }
 
+async fn try_persist_or_move_copy<P>(file: &mut Form<TempFile<'_>>, path: P) -> std::io::Result<()>
+        where P: AsRef<Path>
+{
+    match file.persist_to(&path).await {
+        Ok(x) => Ok(x),
+        Err(ref _e) /*if e.kind() == std::io::ErrorKind::CrossesDevices*/ => {
+            // I'd prefer this to only happen when `e.kind() == std::io::ErrorKind::CrossesDevices`
+            // but `CrossesDevices` is a nightly only feature at this point and I don't want to
+            // force the use of nightly right now
+            // TODO: Revisit this later
+
+            // If persisting fails, try to move the file instead
+            file.move_copy_to(&path).await
+        },
+    }
+}
+
 #[post("/upload", format = "multipart/form-data", data = "<file>")]
 async fn upload(
     mut file: Form<TempFile<'_>>,
@@ -69,7 +86,7 @@ async fn upload(
         let filename = file.name().unwrap_or("FILENAME_UNKNOWN");
         let mut file_path = PathBuf::from(&dest_dir).join(filename);
         file_path.set_extension(ext);
-        file.persist_to(&file_path).await?;
+        try_persist_or_move_copy(&mut file, &file_path).await?;
 
         // Create metadata file
         let metadata_file_path = PathBuf::from(&dest_dir).join("Original filename.txt");
