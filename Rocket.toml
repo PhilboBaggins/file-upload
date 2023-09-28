@@ -1,6 +1,6 @@
 [default]
 limits.file = "10MiB"
-app_upload_dir = "UPLOADS"
+app_upload_dir = "data"
 app_allowed_extensions = [
     "7zip",
     "avi",
