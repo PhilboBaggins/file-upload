@@ -10,7 +10,7 @@ app_allowed_extensions = [
     "csv",
     "doc",  # Microsoft Word document before Word 2007
     "docx",
-    "dxf"
+    "dxf",
     "eps",
     #"exe",
     "gif",
