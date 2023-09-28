@@ -9,8 +9,6 @@ use rocket::response::content::RawHtml;
 use rocket::serde::Deserialize;
 use rocket::State;
 use rocket::tokio;
-use std::fs::File;
-use std::io::Write;
 use std::path::PathBuf;
 use time::format_description;
 use time::OffsetDateTime;
@@ -75,13 +73,12 @@ async fn upload(
 
         // Create metadata file
         let metadata_file_path = PathBuf::from(&dest_dir).join("Original filename.txt");
-        let mut output = File::create(metadata_file_path)?;
         let original_filename = file
             .raw_name()
             .unwrap()
             .dangerous_unsafe_unsanitized_raw()
             .as_str();
-        write!(output, "{}", original_filename)?;
+        tokio::fs::write(&metadata_file_path, original_filename).await?;
 
         // Return message to user
         Ok(format!(
