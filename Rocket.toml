@@ -39,6 +39,10 @@ app_allowed_extensions = [
     "rar",
     "rar",
     "rtf",
+    "SLDDRW", # SolidWorks drawing file
+    "SLDPRT", # SolidWorks part file
+    "STEP", # STEP 3D model file
+    "STP", # STEP 3D model file
     "svg",
     "tar.gz",
     "tar",
