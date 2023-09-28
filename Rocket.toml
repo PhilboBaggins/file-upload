@@ -1,4 +1,4 @@
-[default]
+[global]
 limits.file = "500MiB"
 app_upload_dir = "data"
 app_allowed_extensions = [
