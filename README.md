@@ -13,13 +13,14 @@
     * [ ] Get it running
     * [ ] Usage instructions
     * [ ] Get it working with a smaller image like alpine
-    * [ ] Prevent "invalid cross-device link" error:
+    * [x] Prevent "invalid cross-device link" error:
         * <https://github.com/SergioBenitez/Rocket/issues/1600>
         * <https://github.com/ShaddyDC/track-wear-backend/commit/e85bf54c0688900ff1f7052719f9676835402475>
+    * [ ] Get it to work without the`set_permissions` call
 * [ ] Improve `index.html`:
-    * [ ] Make it pretty
+    * [x] Make it pretty
     * [ ] Allow files to be dragged and dropped
-    * [ ] Show acceptable file extensions
+    * [x] Show acceptable file extensions
     * [ ] Check the file extension locally in the browser before upload so user doesn't have to wait for upload to complete on a file that will be rejected anyway
 * [ ] Authentication
 * [x] Replace synchronous functions with async equivalents:
