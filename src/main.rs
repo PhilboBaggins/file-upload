@@ -5,13 +5,13 @@ use rocket::fairing::AdHoc;
 use rocket::form::Form;
 use rocket::fs::FileName;
 use rocket::fs::TempFile;
-use rocket::response::content::RawHtml;
 use rocket::serde::Deserialize;
 use rocket::State;
 use rocket::tokio;
 use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
+use rocket_dyn_templates::{Template, tera::Tera, context};
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -94,7 +94,7 @@ async fn set_permissions(_file_path: &PathBuf) -> std::io::Result<()> {
 async fn upload(
     mut file: Form<TempFile<'_>>,
     app_config: &State<AppConfig>,
-) -> std::io::Result<String> {
+) -> std::io::Result<Template> {
     if let Some(ext) = get_file_extension(file.raw_name(), &app_config.app_allowed_extensions) {
         // Create directory
         let timestamp = get_current_timestamp();
@@ -120,20 +120,28 @@ async fn upload(
         }
 
         // Return message to user
-        Ok(format!(
-            "{} bytes successfully uploaded to {}.{}",
-            file.len(),
-            file.name().unwrap(),
-            ext
-        ))
+        Ok(Template::render("message", context! {
+            message: format!(
+                "{} bytes successfully uploaded to {}.{}",
+                file.len(),
+                file.name().unwrap(),
+                ext
+            )
+        }))
     } else {
-        Ok("File rejected due to file type restrictions".to_string())
+        Ok(Template::render("message", context! {
+            message: "File rejected due to file type restrictions"
+        }))
     }
 }
 
 #[get("/")]
-fn index() -> RawHtml<&'static str> {
-    RawHtml(include_str!("index.html"))
+fn index() -> Template {
+    Template::render("index", context! {})
+}
+
+pub fn customize(_tera: &mut Tera) {
+
 }
 
 #[launch]
@@ -141,4 +149,7 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index, upload])
         .attach(AdHoc::config::<AppConfig>())
+        .attach(Template::custom(|engines| {
+            customize(&mut engines.tera);
+        }))
 }
