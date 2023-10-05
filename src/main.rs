@@ -108,14 +108,16 @@ async fn upload(
         try_persist_or_move_copy(&mut file, &file_path).await?;
         set_permissions(&file_path).await?;
 
-        // Create metadata file
-        let metadata_file_path = PathBuf::from(&dest_dir).join("Original filename.txt");
+        // Create metadata file (if necessary)
         let original_filename = file
             .raw_name()
             .unwrap()
             .dangerous_unsafe_unsanitized_raw()
             .as_str();
-        tokio::fs::write(&metadata_file_path, original_filename).await?;
+        if format!("{}.{}", file.name().unwrap(), ext) != original_filename {
+            let metadata_file_path = PathBuf::from(&dest_dir).join("Original filename.txt");
+            tokio::fs::write(&metadata_file_path, original_filename).await?;
+        }
 
         // Return message to user
         Ok(format!(
