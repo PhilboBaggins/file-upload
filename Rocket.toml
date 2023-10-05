@@ -3,10 +3,11 @@ limits.file = "500MiB"
 app_upload_dir = "data"
 template_dir = "templates"
 app_allowed_extensions = [
+    "7z",
     "7zip",
     "avi",
     #"bin",
-    "bmp",
+    "blend",
     "bmp",
     "csv",
     "doc",  # Microsoft Word document before Word 2007
