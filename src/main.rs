@@ -6,12 +6,12 @@ use rocket::form::Form;
 use rocket::fs::FileName;
 use rocket::fs::TempFile;
 use rocket::serde::Deserialize;
-use rocket::State;
 use rocket::tokio;
+use rocket::State;
+use rocket_dyn_templates::{context, tera::Tera, Template};
 use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
-use rocket_dyn_templates::{Template, tera::Tera, context};
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -84,7 +84,6 @@ async fn set_permissions(file_path: &PathBuf) -> std::io::Result<()> {
 
 #[cfg(not(unix))]
 async fn set_permissions(_file_path: &PathBuf) -> std::io::Result<()> {
-
     // TODO: ???????????
 
     Ok(())
@@ -120,18 +119,16 @@ async fn upload(
         }
 
         // Return message to user
-        Ok(Template::render("message", context! {
-            message: format!(
-                "{} bytes successfully uploaded to {}.{}",
-                file.len(),
-                file.name().unwrap(),
-                ext
-            )
-        }))
+        let message = format!(
+            "{} bytes successfully uploaded to {}.{}",
+            file.len(),
+            file.name().unwrap(),
+            ext
+        );
+        Ok(Template::render("message", context! {message: message}))
     } else {
-        Ok(Template::render("message", context! {
-            message: "File rejected due to file type restrictions"
-        }))
+        let message = "File rejected due to file type restrictions";
+        Ok(Template::render("message", context! {message: message}))
     }
 }
 
