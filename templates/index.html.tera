@@ -5,4 +5,12 @@
         <input type="file" id="myFile" name="filename" class="big-button">
         <input type="submit" class="big-button">
     </form>
+    <br>
+    <h2>Accepted file extensions</h2>
+    <p>Only the following file extensions are accepted:</p>
+    <ul class="list-columns">
+    {% for ext in allowed_extensions %}
+        <li>{{ ext }}</li>
+    {% endfor %}
+    </ul>
 {% endblock content %}

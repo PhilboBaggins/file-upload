@@ -136,8 +136,10 @@ async fn upload(
 }
 
 #[get("/")]
-fn index() -> Template {
-    Template::render("index", context! {})
+fn index(app_config: &State<AppConfig>) -> Template {
+    Template::render("index", context! {
+        allowed_extensions: &app_config.app_allowed_extensions,
+    })
 }
 
 pub fn customize(_tera: &mut Tera) {

@@ -20,6 +20,16 @@
                 border-radius: 5px;
                 margin: 10px;
             }
+            .list-columns {
+                -webkit-column-count: 5;
+                -moz-column-count: 5;
+                column-count: 5;
+                width: 60%;
+                margin-left: 20%;
+            }
+            .list-columns li {
+                text-align: left;
+            }
         </style>
     </head>
     <body>
