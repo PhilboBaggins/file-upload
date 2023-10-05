@@ -71,6 +71,25 @@ async fn try_persist_or_move_copy<P>(file: &mut Form<TempFile<'_>>, path: P) -> 
     }
 }
 
+#[cfg(unix)]
+async fn set_permissions(file_path: &PathBuf) -> std::io::Result<()> {
+    use std::fs::Permissions;
+    use std::os::unix::fs::PermissionsExt;
+    let perms = 436; // 0664 in octal
+    let perms = Permissions::from_mode(perms);
+    tokio::fs::set_permissions(file_path, perms).await?;
+
+    Ok(())
+}
+
+#[cfg(not(unix))]
+async fn set_permissions(_file_path: &PathBuf) -> std::io::Result<()> {
+
+    // TODO: ???????????
+
+    Ok(())
+}
+
 #[post("/upload", format = "multipart/form-data", data = "<file>")]
 async fn upload(
     mut file: Form<TempFile<'_>>,
@@ -87,6 +106,7 @@ async fn upload(
         let mut file_path = PathBuf::from(&dest_dir).join(filename);
         file_path.set_extension(ext);
         try_persist_or_move_copy(&mut file, &file_path).await?;
+        set_permissions(&file_path).await?;
 
         // Create metadata file
         let metadata_file_path = PathBuf::from(&dest_dir).join("Original filename.txt");
