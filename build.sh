@@ -5,9 +5,13 @@ set -o errexit # (set -e) Exit if any statement returns non-true value
 
 NAME="file_upload"
 
-docker build . -t "$NAME"
+# Choose one of the following:
+DOCKER_OR_PODMAN="docker"
+#DOCKER_OR_PODMAN="podman"
 
-docker image save -o "${NAME}.tar" "$NAME"
+$DOCKER_OR_PODMAN build . -t "$NAME"
 
-docker run -p 8000:8000 -v data:/opt/file_upload/data -it --rm --name "$NAME" "$NAME"
-#docker run --entrypoint 'sh' -it --rm --name "$NAME" "$NAME"
+$DOCKER_OR_PODMAN image save -o "${NAME}.tar" "$NAME"
+
+#$DOCKER_OR_PODMAN run -p 8000:8000 -v data:/opt/file_upload/data -it --rm --name "$NAME" "$NAME"
+#$DOCKER_OR_PODMAN run --entrypoint 'sh' -it --rm --name "$NAME" "$NAME"
