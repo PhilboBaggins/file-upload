@@ -30,6 +30,15 @@
             .list-columns li {
                 text-align: left;
             }
+            .progress-wrapper {
+                width: 40%;
+                margin-left: 30%;
+            }
+            .progress-wrapper .progress {
+                background-color: rgb(196, 116, 25);
+                width: 0%;
+                padding: 5px 0px 5px 0px;
+            }
         </style>
     </head>
     <body>

@@ -12,6 +12,7 @@ use rocket_dyn_templates::{context, tera::Tera, Template};
 use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
+use rocket::http::Status;
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -93,7 +94,7 @@ async fn set_permissions(_file_path: &PathBuf) -> std::io::Result<()> {
 async fn upload(
     mut file: Form<TempFile<'_>>,
     app_config: &State<AppConfig>,
-) -> std::io::Result<Template> {
+) -> std::io::Result<Status> {
     if let Some(ext) = get_file_extension(file.raw_name(), &app_config.app_allowed_extensions) {
         // Create directory
         let timestamp = get_current_timestamp();
@@ -118,17 +119,9 @@ async fn upload(
             tokio::fs::write(&metadata_file_path, original_filename).await?;
         }
 
-        // Return message to user
-        let message = format!(
-            "{} bytes successfully uploaded to {}.{}",
-            file.len(),
-            file.name().unwrap(),
-            ext
-        );
-        Ok(Template::render("message", context! {message: message}))
+        Ok(Status::Ok)
     } else {
-        let message = "File rejected due to file type restrictions";
-        Ok(Template::render("message", context! {message: message}))
+        Ok(Status::BadRequest)
     }
 }
 

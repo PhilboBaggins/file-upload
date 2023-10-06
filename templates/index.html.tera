@@ -1,10 +1,43 @@
 {% extends "base" %}
 
 {% block content %}
+    <script>
+        function postFile() {
+            let fileToUpload = document.getElementById('file').files[0];
+            if (fileToUpload == undefined) {
+                alert('Please select a file to upload');
+                return;
+            }
+
+            let form = document.querySelector('form');
+            let formdata = new FormData(form);
+
+            let request = new XMLHttpRequest();
+            request.upload.addEventListener('progress', function (e) {
+                let percent = Math.round(e.loaded / e.total * 100);
+                document.getElementById('progress').style.width = percent + '%';
+                document.getElementById('progress').innerHTML   = percent + '%';
+            });
+            request.onload = function () {
+                if (request.status != 200) {
+                    alert('Error uploading file');
+                }
+            };
+            request.ontimeout = function () {
+                alert('Error uploading file: Request timed out');
+            };
+            request.timeout = 50000;
+            request.open('post', './upload');
+            request.send(formdata);
+        }
+    </script>
     <form action="./upload" method="post", enctype="multipart/form-data">
-        <input type="file" id="myFile" name="filename" class="big-button">
-        <input type="submit" class="big-button">
+        <input type="file" id="file" name="filename" class="big-button"/>
+        <button type="button" onclick="postFile()" class="big-button">Upload</button>
     </form>
+    <div class="progress-wrapper">
+        <div class="progress" id="progress"></div>
+    </div>
     <br>
     <h2>Accepted file extensions</h2>
     <p>Only the following file extensions are accepted:</p>

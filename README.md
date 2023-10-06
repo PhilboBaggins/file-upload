@@ -10,7 +10,7 @@
 
 * [ ] Documentation
 * [ ] Docker image
-    * [ ] Get it running
+    * [x] Get it running
     * [ ] Usage instructions
     * [ ] Get it working with a smaller image like alpine
     * [x] Prevent "invalid cross-device link" error:
@@ -22,6 +22,7 @@
     * [ ] Allow files to be dragged and dropped
     * [x] Show acceptable file extensions
     * [ ] Check the file extension locally in the browser before upload so user doesn't have to wait for upload to complete on a file that will be rejected anyway
+    * [x] Progress bar
 * [ ] Authentication
 * [x] Replace synchronous functions with async equivalents:
     * [x] `std::fs::create_dir_all`
