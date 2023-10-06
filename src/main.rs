@@ -1,10 +1,12 @@
 #[macro_use]
 extern crate rocket;
 
+use rocket::data::Limits;
 use rocket::fairing::AdHoc;
 use rocket::form::Form;
 use rocket::fs::FileName;
 use rocket::fs::TempFile;
+use rocket::http::Status;
 use rocket::serde::Deserialize;
 use rocket::tokio;
 use rocket::State;
@@ -12,8 +14,6 @@ use rocket_dyn_templates::{context, tera::Tera, Template};
 use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
-use rocket::http::Status;
-use rocket::data::Limits;
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
@@ -27,9 +27,7 @@ fn get_file_extension<'a>(
     file_name: Option<&FileName>,
     allowed_extensions: &'a Vec<String>,
 ) -> Option<&'a str> {
-    let file_name = file_name?;
-
-    let dangerous_unsafe_unsanitized_raw = file_name
+    let dangerous_unsafe_unsanitized_raw = file_name?
         .dangerous_unsafe_unsanitized_raw()
         .as_str()
         .to_ascii_lowercase();
