@@ -39,7 +39,8 @@
         <div class="progress" id="progress"></div>
     </div>
     <br>
-    <h2>Accepted file extensions</h2>
+    <h2>File upload restrictions</h2>
+    <p>Maximum file size: {{ file_size_limit }}</p>
     <p>Only the following file extensions are accepted:</p>
     <ul class="list-columns">
     {% for ext in allowed_extensions %}

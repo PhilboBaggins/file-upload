@@ -13,12 +13,14 @@ use std::path::{Path, PathBuf};
 use time::format_description;
 use time::OffsetDateTime;
 use rocket::http::Status;
+use rocket::data::Limits;
 
 #[derive(Debug, Deserialize)]
 #[serde(crate = "rocket::serde")]
 struct AppConfig {
     app_upload_dir: String,
     app_allowed_extensions: Vec<String>,
+    limits: Limits,
 }
 
 fn get_file_extension<'a>(
@@ -127,7 +129,17 @@ async fn upload(
 
 #[get("/")]
 fn index(app_config: &State<AppConfig>) -> Template {
+    let file_size_limit = std::cmp::min(
+        app_config.limits.get("data-form"),
+        app_config.limits.get("file")
+    );
+    let file_size_limit = match file_size_limit {
+        Some(x) => format!("{}", x),
+        None => "Unknown".to_string(),
+    };
+
     Template::render("index", context! {
+        file_size_limit: file_size_limit,
         allowed_extensions: &app_config.app_allowed_extensions,
     })
 }
